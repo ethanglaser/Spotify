@@ -6,7 +6,6 @@ import sys
 
 timeKey = {'long_term': "all time", 'medium_term': "the past 6 months", 'short_term': "the past month", None: "the past 6 months"}
 
-
 def getHeaders(oAuth):
     headers = {
     'Accept': 'application/json',

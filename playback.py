@@ -1,6 +1,6 @@
 import requests
-import os
 import json
+import sys
 
 
 def getHeaders(oAuth):
@@ -21,7 +21,7 @@ def getActive(devices):
     for value in devices['devices']:
         if value['is_active']:
             return value['id']
-    return None
+    raise ValueError('Error: No devices currently active for this user.')
 
 def playback(action, device, oAuth):
     url='https://api.spotify.com/v1/me/player/' + action + '?device_id='+device
@@ -30,12 +30,17 @@ def playback(action, device, oAuth):
     elif action == 'pause' or action == 'play':
         response = requests.put(url=url, headers=getHeaders(oAuth))
     else:
-        response = requests.get(url='https://api.spotify.com/v1/me/player', headers=getHeaders(oAuth))
-        print(response.content)
-    print(response)
+        raise ValueError('Please select a valid playback option: play, pause, next, or previous.')
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        raise ValueError("Error: Include authorization token in command line arguments.")
+    auth = sys.argv[1]
+    action = 'pause'
+    if len(sys.argv) > 2:
+        action = sys.argv[2]
+    
     devices = getDevices(auth)
     active = getActive(devices)
-    playback('play', active, auth)
+    playback(action, active, auth)
